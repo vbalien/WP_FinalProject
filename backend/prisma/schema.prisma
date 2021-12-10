@@ -29,6 +29,7 @@ model User {
   Post       Post[]
   followedBy User[]   @relation("UserFollows", references: [id])
   following  User[]   @relation("UserFollows", references: [id])
+  activated  Boolean  @default(false)
 }
 
 model Message {
