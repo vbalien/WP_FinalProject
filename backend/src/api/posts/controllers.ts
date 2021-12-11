@@ -53,6 +53,7 @@ export async function post_get_one(
     where: { id },
     include: {
       author: true,
+      attatchments: true,
     },
   });
 

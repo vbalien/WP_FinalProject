@@ -211,6 +211,10 @@ export async function user_follow_toggle(
     throw Error("존재하지 않는 유저입니다.");
   }
 
+  if (targetUser.id === req.user!.id) {
+    throw Error("자기 자신은 팔로우 할 수 없습니다.");
+  }
+
   // 팔로우중 여부 체크
   const isFollowed = await prisma.user.findFirst({
     where: {
