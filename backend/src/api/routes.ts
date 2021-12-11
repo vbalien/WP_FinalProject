@@ -4,6 +4,7 @@ import { router as userRouter } from "./users";
 import { router as postRouter } from "./posts";
 import { router as messageRouter } from "./messages";
 import { router as hashtagRouter } from "./hashtags";
+import { router as attatchmentRouter } from "./attatchments";
 
 export const router = express
   .Router()
@@ -19,5 +20,8 @@ export const router = express
 
   // hashtag route
   .use("/hashtags", hashtagRouter)
+
+  // attatchment route
+  .use("/attatchments", attatchmentRouter)
 
   .use(errorHandler);

@@ -1,24 +1,32 @@
 import { Router } from "express";
-import multer from "multer";
+import { body } from "express-validator";
+import userGuard from "../../guards/user-guard";
+import errorWrap from "../error-wrap";
 import * as controllers from "./controllers";
 
-const upload = multer({ dest: "uploads/" });
-
 export const router = Router()
-  // 모든 게시글 요청
-  .get("/", controllers.post_get_all)
+  // 피드 게시글 요청
+  .get("/feed", errorWrap(controllers.post_get_all))
 
   // 새 게시물 작성
-  .post("/", upload.array("photo", 5), controllers.post_add)
+  .post(
+    "/",
+    userGuard("ACTIVATED"),
+
+    body("content").notEmpty().withMessage("내용을 입력해주세요."),
+
+    body("images")
+      .isArray({ min: 1, max: 5 })
+      .withMessage("이미지 개수를 확인해주세요."),
+
+    errorWrap(controllers.post_add)
+  )
 
   // 하나의 게시글 요청
-  .get("/:id", controllers.post_get_one)
+  .get("/:id", userGuard("ACTIVATED"), errorWrap(controllers.post_get_one))
 
   // 게시글 수정 요청
-  .put("/:id", controllers.post_update)
-
-  // 게시글 좋아요 토글 요청
-  .post("/:id/like_toggle", controllers.post_like_toggle)
+  .put("/:id", userGuard("ACTIVATED"), errorWrap(controllers.post_update))
 
   // 게시글 삭제 요청
-  .delete("/:id", controllers.post_delete);
+  .delete("/:id", userGuard("ACTIVATED"), errorWrap(controllers.post_delete));

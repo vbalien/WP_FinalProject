@@ -90,7 +90,7 @@ export async function user_verify_send(
   req: express.Request,
   res: express.Response
 ) {
-  const token = Math.random().toString(36).substr(2, 5);
+  const token = Math.random().toString(36).slice(2, 7);
   const now = new Date();
   const expiresIn = new Date(now.getTime() + 3 * 60000).toISOString();
   const tokenData = await prisma.userVerifyToken.create({

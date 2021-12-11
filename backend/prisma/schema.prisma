@@ -15,47 +15,49 @@ model Post {
   createdAt    DateTime      @default(now()) @db.Timestamp(6)
   content      String
   authorId     String
-  user         User          @relation(fields: [authorId], references: [id])
+  author       User          @relation(fields: [authorId], references: [id])
   attatchments Attatchment[]
   hashtags     HashTag[]
 }
 
 model User {
-  id         String   @id @default(uuid())
-  name       String   @db.VarChar(255)
-  username   String   @unique @db.VarChar(255)
-  email      String   @unique @db.VarChar(255)
-  password   String   @db.VarChar(255)
+  id         String  @id @default(uuid())
+  name       String  @db.VarChar(255)
+  username   String  @unique @db.VarChar(255)
+  email      String  @unique @db.VarChar(255)
+  password   String  @db.VarChar(255)
   Post       Post[]
-  followedBy User[]   @relation("UserFollows", references: [id])
-  following  User[]   @relation("UserFollows", references: [id])
-  activated  Boolean  @default(false)
+  followedBy User[]  @relation("UserFollows", references: [id])
+  following  User[]  @relation("UserFollows", references: [id])
+  activated  Boolean @default(false)
 }
 
 model UserVerifyToken {
-  id         Int      @id @default(autoincrement())
-  token      String 
-  userId     String
-  expiresIn  DateTime
+  id        Int      @id @default(autoincrement())
+  token     String
+  userId    String
+  expiresIn DateTime
 }
 
 model Message {
-  id       String   @id @default(uuid())
-  fromId   String
-  toId     String
-  text     String
-  createdAt    DateTime      @default(now()) @db.Timestamp(6)
+  id        String   @id @default(uuid())
+  fromId    String
+  toId      String
+  text      String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
 }
 
 model Attatchment {
-  id       String   @id @default(uuid())
-  filename String
-  postId   String
-  post     Post     @relation(fields: [postId], references: [id])
+  id           String  @id @default(uuid())
+  originalname String
+  filename     String
+  mimetype     String
+  postId       String?
+  post         Post?   @relation(fields: [postId], references: [id])
 }
 
 model HashTag {
-  id       String   @id @default(uuid())
-  name     String   @unique
-  posts    Post[]
+  id    String @id @default(uuid())
+  name  String @unique
+  posts Post[]
 }
