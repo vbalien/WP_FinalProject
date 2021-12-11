@@ -32,6 +32,13 @@ model User {
   activated  Boolean  @default(false)
 }
 
+model UserVerifyToken {
+  id         Int      @id @default(autoincrement())
+  token      String 
+  userId     String
+  expiresIn  DateTime
+}
+
 model Message {
   id       String   @id @default(uuid())
   fromId   String
