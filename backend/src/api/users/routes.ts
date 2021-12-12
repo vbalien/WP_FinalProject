@@ -49,20 +49,24 @@ export const router = Router()
   )
 
   // 로그인 요청
-  .post("/login", userGuard("LOGGED_OUT"), controllers.user_login)
+  .post("/login", userGuard("LOGGED_OUT"), errorWrap(controllers.user_login))
 
   // 로그아웃 요청
-  .post("/logout", userGuard("LOGGED_IN"), controllers.user_logout)
+  .post("/logout", userGuard("LOGGED_IN"), errorWrap(controllers.user_logout))
 
   // 프로필 정보 요청
-  .get("/profile", userGuard("LOGGED_IN"), controllers.user_profile)
+  .get("/profile", userGuard("LOGGED_IN"), errorWrap(controllers.user_profile))
 
   // 팔로우중인 유저 목록 요청
-  .get("/following", userGuard("ACTIVATED"), controllers.user_following)
+  .get(
+    "/following",
+    userGuard("ACTIVATED"),
+    errorWrap(controllers.user_following)
+  )
 
   // 팔로우 토글 요청
   .post(
     "/follow_toggle",
     userGuard("INACTIVATED"),
-    controllers.user_follow_toggle
+    errorWrap(controllers.user_follow_toggle)
   );

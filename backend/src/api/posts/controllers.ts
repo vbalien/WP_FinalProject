@@ -2,12 +2,26 @@ import express from "express";
 import prisma from "../../prisma";
 
 export async function post_get_all(
-  _req: express.Request,
+  req: express.Request<
+    unknown,
+    unknown,
+    unknown,
+    { take: number; skip: number }
+  >,
   res: express.Response
 ) {
-  const posts = prisma.post.findMany();
+  const take = req.query.take;
+  const skip = req.query.skip;
+
+  const trans = await prisma.$transaction([
+    prisma.post.count(),
+    prisma.post.findMany({ take, skip }),
+  ]);
   return res.json({
-    data: posts,
+    data: {
+      total: trans[0],
+      posts: trans[1],
+    },
   });
 }
 
