@@ -10,6 +10,7 @@
   "scripts": {
     "frontend": "yarn workspace @webstudy/frontend",
     "backend": "yarn workspace @webstudy/backend",
-    "prisma": "yarn workspace @webstudy/backend prisma"
+    "prisma": "yarn workspace @webstudy/backend prisma",
+    "start": "yarn frontend build && yarn backend start"
   }
 }

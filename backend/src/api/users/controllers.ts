@@ -45,9 +45,11 @@ export async function user_register(
       password: await bcrypt.hash(reqData.password, 8),
     },
     select: {
+      id: true,
       name: true,
       username: true,
       email: true,
+      activated: true,
     },
   });
 
@@ -77,6 +79,13 @@ export async function user_verify(req: express.Request, res: express.Response) {
       id: req.user!.id,
     },
     data: {
+      activated: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
       activated: true,
     },
   });
@@ -145,7 +154,11 @@ export async function user_profile(
       id: req.user!.id,
     },
     select: {
+      id: true,
+      name: true,
       username: true,
+      email: true,
+      activated: true,
       _count: {
         select: {
           following: true,
@@ -164,20 +177,20 @@ export async function user_following(
   req: express.Request,
   res: express.Response
 ) {
-  const users = await prisma.user.findMany({
-    where: {
-      followedBy: {
-        some: {
-          id: req.user!.id,
+  const users = (
+    await prisma.user.findMany({
+      where: {
+        followedBy: {
+          some: {
+            id: req.user!.id,
+          },
         },
       },
-    },
-    select: {
-      id: true,
-      username: true,
-      name: true,
-    },
-  });
+      select: {
+        id: true,
+      },
+    })
+  ).map((user) => user.id);
   return res.json({ data: users });
 }
 
@@ -188,8 +201,10 @@ export async function user_get_all(
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      username: true,
       name: true,
+      username: true,
+      email: true,
+      activated: true,
     },
   });
   return res.json({ data: users });
@@ -244,6 +259,13 @@ export async function user_follow_toggle(
               id: targetUser.id,
             },
           },
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+      activated: true,
     },
   });
   return res.json({ data: resultUser });

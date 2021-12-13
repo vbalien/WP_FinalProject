@@ -5,8 +5,8 @@ import errorWrap from "../error-wrap";
 import * as controllers from "./controllers";
 
 export const router = Router()
-  // 피드 게시글 요청
-  .get("/feed", errorWrap(controllers.post_get_all))
+  // 모든 게시글 요청
+  .get("/", errorWrap(controllers.post_get_all))
 
   // 새 게시물 작성
   .post(
@@ -21,9 +21,6 @@ export const router = Router()
 
     errorWrap(controllers.post_add)
   )
-
-  // 하나의 게시글 요청
-  .get("/:id", userGuard("ACTIVATED"), errorWrap(controllers.post_get_one))
 
   // 게시글 수정 요청
   .put("/:id", userGuard("ACTIVATED"), errorWrap(controllers.post_update))

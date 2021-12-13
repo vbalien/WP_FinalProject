@@ -23,7 +23,6 @@ esbuild
       bundle: true,
       minify: true,
       sourcemap: true,
-      target: ["chrome58", "firefox57", "safari11", "edge16"],
       inject: [path.join(__dirname, "react-shim.js")],
       jsxFactory: "jsx",
       jsxFragment: "Fragment",

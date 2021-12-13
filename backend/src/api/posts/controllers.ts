@@ -2,20 +2,35 @@ import express from "express";
 import prisma from "../../prisma";
 
 export async function post_get_all(
-  req: express.Request<
-    unknown,
-    unknown,
-    unknown,
-    { take: number; skip: number }
-  >,
+  req: express.Request,
   res: express.Response
 ) {
-  const take = req.query.take;
-  const skip = req.query.skip;
+  const take = Number.parseInt(req.query.take as string);
+  const skip = Number.parseInt(req.query.skip as string);
 
   const trans = await prisma.$transaction([
     prisma.post.count(),
-    prisma.post.findMany({ take, skip }),
+    prisma.post.findMany({
+      take,
+      skip,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            email: true,
+            activated: true,
+          },
+        },
+        attatchments: {
+          select: { id: true },
+        },
+        hashtags: {
+          select: { name: true },
+        },
+      },
+    }),
   ]);
   return res.json({
     data: {
@@ -53,31 +68,24 @@ export async function post_add(req: express.Request, res: express.Response) {
         connect: images,
       },
     },
-  });
-
-  return res.json({ data: post });
-}
-
-export async function post_get_one(
-  req: express.Request,
-  res: express.Response
-) {
-  const id = req.params.id;
-  const post = await prisma.post.findUnique({
-    where: { id },
     include: {
-      author: true,
-      attatchments: true,
+      author: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          activated: true,
+        },
+      },
+      attatchments: {
+        select: { id: true },
+      },
+      hashtags: {
+        select: { name: true },
+      },
     },
   });
-
-  if (!post) {
-    throw Error("존재하지 않는 게시글입니다.");
-  }
-
-  if (post.author.id !== req.user!.id) {
-    throw Error("권한이 없습니다.");
-  }
 
   return res.json({ data: post });
 }
@@ -112,7 +120,21 @@ export async function post_update(req: express.Request, res: express.Response) {
       },
     },
     include: {
-      author: true,
+      author: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          activated: true,
+        },
+      },
+      attatchments: {
+        select: { id: true },
+      },
+      hashtags: {
+        select: { name: true },
+      },
     },
   });
 
@@ -132,7 +154,18 @@ export async function post_delete(req: express.Request, res: express.Response) {
   const post = await prisma.post.delete({
     where: { id },
     include: {
-      author: true,
+      author: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          activated: true,
+        },
+      },
+      attatchments: {
+        select: { id: true },
+      },
     },
   });
 

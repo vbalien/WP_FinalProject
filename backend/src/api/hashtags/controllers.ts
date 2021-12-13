@@ -2,17 +2,12 @@ import express from "express";
 import prisma from "../../prisma";
 
 export async function hashtag_get_items(
-  req: express.Request<
-    { hashtag: string },
-    unknown,
-    unknown,
-    { take: number; skip: number }
-  >,
+  req: express.Request,
   res: express.Response
 ) {
   const name = req.params.hashtag;
-  const take = req.query.take;
-  const skip = req.query.skip;
+  const take = Number.parseInt(req.query.take as string);
+  const skip = Number.parseInt(req.query.skip as string);
 
   const trans = await prisma.$transaction([
     prisma.post.count({
@@ -32,6 +27,23 @@ export async function hashtag_get_items(
           some: {
             name,
           },
+        },
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            email: true,
+            activated: true,
+          },
+        },
+        attatchments: {
+          select: { id: true },
+        },
+        hashtags: {
+          select: { name: true },
         },
       },
     }),

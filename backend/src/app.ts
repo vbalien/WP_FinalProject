@@ -1,9 +1,10 @@
 import express from "express";
 import session from "express-session";
+import path from "path";
 import { router as apiRouter } from "./api";
 import { configuration as passportConfig } from "./passport";
 
-const port = 3000;
+const port = 8014;
 const app = express();
 
 // json format 사용
@@ -18,11 +19,6 @@ const sess = {
     secure: false,
   },
 };
-
-if (app.get("env") === "production") {
-  app.set("trust proxy", 1); // trust first proxy
-  sess.cookie.secure = true; // serve secure cookies
-}
 app.use(session(sess));
 
 // passport 사용
@@ -30,6 +26,21 @@ passportConfig(app);
 
 // api route 등록
 app.use("/api", apiRouter);
+
+// frontend 서빙
+app.use(
+  express.static(
+    path.join(__dirname, "../../node_modules/@webstudy/frontend/dist")
+  )
+);
+app.get("*", (_req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "../../node_modules/@webstudy/frontend/dist/index.html"
+    )
+  );
+});
 
 app.listen(port, async () => {
   console.log(`Express started on http://localhost:${port}`);
