@@ -60,7 +60,7 @@ export default function Verify() {
 
           <InputGroup size="md">
             <Input ref={tokenField} type="text" placeholder="인증키 입력" />
-            <InputRightElement p={0}>
+            <InputRightElement p={0} width="4.5rem">
               <Button colorScheme="blue" type="submit">
                 {"인증하기"}
               </Button>

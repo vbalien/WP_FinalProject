@@ -12,13 +12,14 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FormEvent, useRef } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { login } from "../../lib/api/users";
 import userState from "../../store/userState";
 import InstagramLogo from "./images/Instagram_logo.png";
 
 export default function Login() {
+  const navigate = useNavigate();
   const setUser = useSetRecoilState(userState);
   const usernameRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
@@ -30,6 +31,7 @@ export default function Login() {
         passwordRef.current.value
       );
       setUser(res.data);
+      navigate("/");
     } catch (err) {
       alert(err.message);
     }

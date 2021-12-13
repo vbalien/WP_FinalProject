@@ -12,7 +12,7 @@ export function allUsers() {
 }
 
 type LoginResponse = {
-  data: UserView;
+  data: UserProfile;
 };
 /**
  * 로그인 요청
@@ -65,7 +65,7 @@ export function verifySend() {
 }
 
 type VerifyResponse = {
-  data: UserView;
+  data: UserProfile;
 };
 /**
  * 이메일 인증코드 검증
@@ -88,7 +88,7 @@ export function following() {
 }
 
 type FollowToggleResponse = {
-  data: UserView;
+  data: string;
 };
 /**
  * 팔로우 토글 요청

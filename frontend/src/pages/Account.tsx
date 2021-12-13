@@ -38,7 +38,7 @@ export default function Account() {
   };
 
   return (
-    <Container maxW="sm" centerContent>
+    <Container maxW="sm" centerContent mt={3}>
       <form css={{ width: "100%" }} onSubmit={onSubmit}>
         <VStack alignItems="flex-end">
           <Box alignSelf="center">

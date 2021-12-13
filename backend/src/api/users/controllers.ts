@@ -67,7 +67,7 @@ export async function user_verify(req: express.Request, res: express.Response) {
   });
 
   if (!tokenData) {
-    throw Error("인증 실패");
+    throw Error("인증 실패, 올바르게 입력했는지 확인해주세요.");
   }
 
   if (tokenData.expiresIn.getTime() < new Date().getTime()) {
@@ -87,6 +87,12 @@ export async function user_verify(req: express.Request, res: express.Response) {
       username: true,
       email: true,
       activated: true,
+      _count: {
+        select: {
+          following: true,
+          followedBy: true,
+        },
+      },
     },
   });
 
@@ -243,7 +249,7 @@ export async function user_follow_toggle(
   });
 
   // 팔로우 토글
-  const resultUser = await prisma.user.update({
+  await prisma.user.update({
     where: {
       id: req.user!.id,
     },
@@ -268,5 +274,5 @@ export async function user_follow_toggle(
       activated: true,
     },
   });
-  return res.json({ data: resultUser });
+  return res.json({ data: "ok" });
 }

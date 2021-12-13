@@ -67,6 +67,6 @@ export const router = Router()
   // 팔로우 토글 요청
   .post(
     "/follow_toggle",
-    userGuard("INACTIVATED"),
+    userGuard("ACTIVATED"),
     errorWrap(controllers.user_follow_toggle)
   );
