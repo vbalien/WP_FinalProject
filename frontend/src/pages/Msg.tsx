@@ -11,7 +11,14 @@ import {
   InputRightAddon,
   Button,
 } from "@chakra-ui/react";
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilValue } from "recoil";
 import { getMessages, getRooms, sendMessage } from "../lib/api/messages";
 import { Message, Room } from "../lib/api/types";
@@ -22,6 +29,7 @@ function MsgArea({ room, onUpdate }: { room: Room; onUpdate: () => void }) {
   const scrollBox = useRef<HTMLDivElement>();
   const textInput = useRef<HTMLInputElement>();
   const [msgs, setMsgs] = useState<Message[]>([]);
+  const prevCount = useRef(0);
 
   const onRefresh = useCallback(async () => {
     try {
@@ -33,12 +41,13 @@ function MsgArea({ room, onUpdate }: { room: Room; onUpdate: () => void }) {
         )
       );
     } catch (err) {
-      alert(err.message);
+      console.log(err.message);
     }
   }, [room]);
 
   // 주기적으로 타이머로 새로고침
   useEffect(() => {
+    textInput.current.focus();
     onRefresh();
     const timer = setInterval(() => {
       onRefresh();
@@ -49,7 +58,12 @@ function MsgArea({ room, onUpdate }: { room: Room; onUpdate: () => void }) {
   }, [onRefresh]);
 
   useEffect(() => {
-    scrollBox.current.scrollTop = scrollBox.current.scrollHeight;
+    // 새로운 채팅이 있을 경우만 스크롤 내림
+    if (prevCount.current < msgs.length) {
+      scrollBox.current.scrollTop = scrollBox.current.scrollHeight;
+    }
+
+    prevCount.current = msgs.length;
   }, [msgs]);
 
   const onMsgSend = useCallback(
@@ -61,7 +75,7 @@ function MsgArea({ room, onUpdate }: { room: Room; onUpdate: () => void }) {
         setMsgs((msgs) => [...msgs, res.data]);
         onUpdate();
       } catch (err) {
-        alert(err.message);
+        console.log(err.message);
       }
     },
     [room, onUpdate]
@@ -114,11 +128,18 @@ export default function Msg() {
   const onUpdate = async () => {
     const res = await getRooms();
     setRooms(
-      res.data.sort(
-        (a, b) =>
+      res.data.sort((a, b) => {
+        if (!a.last_msg) {
+          return -1;
+        }
+        if (!b.last_msg) {
+          return -1;
+        }
+        return (
           new Date(b.last_msg.createdAt).getTime() -
           new Date(a.last_msg.createdAt).getTime()
-      )
+        );
+      })
     );
   };
 
