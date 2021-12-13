@@ -54,6 +54,7 @@ model Attatchment {
   mimetype     String
   postId       String?
   post         Post?   @relation(fields: [postId], references: [id])
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
 }
 
 model HashTag {

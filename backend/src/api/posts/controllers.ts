@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import express from "express";
 import prisma from "../../prisma";
 
@@ -5,14 +6,44 @@ export async function post_get_all(
   req: express.Request,
   res: express.Response
 ) {
+  let whereInput: Prisma.PostWhereInput = {};
+  const kind = req.query.kind as string;
+  const exact = req.query.exact === "true";
+  const query = req.query.query as string;
   const take = Number.parseInt(req.query.take as string);
   const skip = Number.parseInt(req.query.skip as string);
 
+  if (kind === "author") {
+    whereInput = {
+      author: {
+        username: exact ? { equals: query } : { contains: query },
+      },
+    };
+  } else if (kind === "hashtag") {
+    whereInput = {
+      hashtags: {
+        some: { name: exact ? { equals: query } : { contains: query } },
+      },
+    };
+  } else if (kind === "content") {
+    whereInput = {
+      content: {
+        contains: query,
+      },
+    };
+  }
+
+  console.log(JSON.stringify(whereInput, null, 2));
+
   const trans = await prisma.$transaction([
-    prisma.post.count(),
+    prisma.post.count({
+      where: whereInput,
+    }),
     prisma.post.findMany({
       take,
       skip,
+      where: whereInput,
+      orderBy: { createdAt: "desc" },
       include: {
         author: {
           select: {
@@ -24,6 +55,7 @@ export async function post_get_all(
           },
         },
         attatchments: {
+          orderBy: { createdAt: "asc" },
           select: { id: true },
         },
         hashtags: {
@@ -49,11 +81,11 @@ export async function post_add(req: express.Request, res: express.Response) {
 
   const content: string = req.body.content;
   const matches = content.match(/#\S+/g);
-  const hashtags = matches
-    ? matches.map((tagname) => ({
-        name: tagname,
-      }))
-    : [];
+  const hashtags = matches ? matches.map((tagname) => tagname.slice(1)) : [];
+  const hashtagsQuery = hashtags.map((name) => ({
+    where: { name },
+    create: { name },
+  }));
 
   const post = await prisma.post.create({
     data: {
@@ -61,7 +93,7 @@ export async function post_add(req: express.Request, res: express.Response) {
       content,
 
       hashtags: {
-        create: hashtags,
+        connectOrCreate: hashtagsQuery,
       },
 
       attatchments: {
@@ -98,29 +130,30 @@ export async function post_update(req: express.Request, res: express.Response) {
     throw Error("하나 이상의 이미지를 업로드해주세요.");
   }
 
-  const content: string = req.body.contant;
+  const content: string = req.body.content;
   const matches = content.match(/#\S+/g);
-  const hashtags = matches
-    ? matches.map((tagname) => ({
-        name: tagname,
-      }))
-    : [];
+  const hashtags = matches ? matches.map((tagname) => tagname.slice(1)) : [];
+  const hashtagsQuery = hashtags.map((name) => ({
+    where: { name },
+    create: { name },
+  }));
 
   const [, post] = await prisma.$transaction([
     prisma.post.update({
       where: { id },
       data: {
-        hashtags: { set: [] },
+        hashtags: {
+          set: [],
+        },
       },
     }),
-
     prisma.post.update({
       where: { id },
       data: {
         content,
 
         hashtags: {
-          create: hashtags,
+          connectOrCreate: hashtagsQuery,
         },
 
         attatchments: {

@@ -25,7 +25,7 @@ export default function Follow() {
         setUsers(res[0].data.filter((user) => user.id !== me.id));
         setFollowUserIds(res[1].data);
       } catch (err) {
-        alert(err);
+        alert(err.message);
       }
     })();
   }, []);
@@ -42,7 +42,7 @@ export default function Follow() {
         }
         setFollowUserIds(newIds);
       } catch (err) {
-        alert(err);
+        alert(err.message);
       }
     },
     [followUserIds]

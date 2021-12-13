@@ -29,7 +29,7 @@ type Attatchment = {
 };
 export type Post = {
   id: string;
-  createAt: string;
+  createdAt: string;
   content: string;
   author: UserView;
   attatchments: Attatchment[];

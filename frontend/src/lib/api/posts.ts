@@ -7,11 +7,27 @@ type AllPostsResponse = {
     posts: Post[];
   };
 };
+type AllPostsPayload = {
+  take?: number;
+  skip?: number;
+  kind?: string;
+  query?: string;
+  exact?: string;
+};
 /**
  * 모든 게시글 목록
  */
-export function allPosts(take: number = 9, skip: number = 0) {
-  return request<AllPostsResponse>("GET", `/posts/?take=${take}&skip=${skip}`);
+export function allPosts({
+  take = 9,
+  skip = 0,
+  kind = "",
+  query = "",
+  exact = "",
+}: AllPostsPayload) {
+  return request<AllPostsResponse>(
+    "GET",
+    `/posts/?take=${take}&skip=${skip}&kind=${kind}&query=${query}&exact=${exact}`
+  );
 }
 
 type NewPostResponse = {
@@ -47,7 +63,7 @@ type EditPostPayload = {
   /**
    * 이미지 ID 목록
    */
-  images: [string, string?, string?, string?, string?];
+  images: string[];
 };
 /**
  * 게시글 수정

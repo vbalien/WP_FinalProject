@@ -25,7 +25,7 @@ export default function New() {
       const newImage = res.data.id;
       setImageIds((images) => [...images, newImage]);
     } catch (err) {
-      console.log(err);
+      alert(err.message);
     }
   };
 
@@ -44,7 +44,7 @@ export default function New() {
         });
         navigate("/");
       } catch (err) {
-        alert(err);
+        alert(err.message);
       }
     },
     [imageIds]
