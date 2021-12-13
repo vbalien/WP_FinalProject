@@ -33,8 +33,6 @@ export async function post_get_all(
     };
   }
 
-  console.log(JSON.stringify(whereInput, null, 2));
-
   const trans = await prisma.$transaction([
     prisma.post.count({
       where: whereInput,
