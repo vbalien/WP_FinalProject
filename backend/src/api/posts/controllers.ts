@@ -47,7 +47,7 @@ export async function post_add(req: express.Request, res: express.Response) {
     throw Error("하나 이상의 이미지를 업로드해주세요.");
   }
 
-  const content: string = req.body.contant;
+  const content: string = req.body.content;
   const matches = content.match(/#\S+/g);
   const hashtags = matches
     ? matches.map((tagname) => ({
@@ -106,37 +106,46 @@ export async function post_update(req: express.Request, res: express.Response) {
       }))
     : [];
 
-  const post = await prisma.post.update({
-    where: { id },
-    data: {
-      content,
-
-      hashtags: {
-        create: hashtags,
+  const [, post] = await prisma.$transaction([
+    prisma.post.update({
+      where: { id },
+      data: {
+        hashtags: { set: [] },
       },
+    }),
 
-      attatchments: {
-        connect: images,
-      },
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          username: true,
-          email: true,
-          activated: true,
+    prisma.post.update({
+      where: { id },
+      data: {
+        content,
+
+        hashtags: {
+          create: hashtags,
+        },
+
+        attatchments: {
+          set: images,
         },
       },
-      attatchments: {
-        select: { id: true },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            email: true,
+            activated: true,
+          },
+        },
+        attatchments: {
+          select: { id: true },
+        },
+        hashtags: {
+          select: { name: true },
+        },
       },
-      hashtags: {
-        select: { name: true },
-      },
-    },
-  });
+    }),
+  ]);
 
   if (!post) {
     throw Error("존재하지 않는 게시글입니다.");

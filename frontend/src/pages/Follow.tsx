@@ -82,7 +82,7 @@ export default function Follow() {
                   colorScheme="red"
                   onClick={() => onToggle(user)}
                 >
-                  언팔로우
+                  {"언팔로우"}
                 </Button>
               ) : (
                 <Button
@@ -90,7 +90,7 @@ export default function Follow() {
                   colorScheme="blue"
                   onClick={() => onToggle(user)}
                 >
-                  팔로우
+                  {"팔로우"}
                 </Button>
               )}
             </Box>

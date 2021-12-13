@@ -26,7 +26,7 @@ type NewPostPayload = {
   /**
    * 이미지 ID 목록
    */
-  images: [string, string?, string?, string?, string?];
+  images: string[];
 };
 /**
  * 게시글 등록

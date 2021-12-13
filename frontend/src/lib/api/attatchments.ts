@@ -14,5 +14,5 @@ type UploadResponse = {
 export function upload(file: File) {
   const data = new FormData();
   data.append("file", file);
-  return request<UploadResponse>("POST", "/attatchments", data, {});
+  return request<UploadResponse>("POST", "/attatchments/upload", data, {});
 }
