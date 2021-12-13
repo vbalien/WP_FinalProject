@@ -32,8 +32,15 @@ export async function message_get_messages(
   req: express.Request,
   res: express.Response
 ) {
+  const take = req.params.take
+    ? Number.parseInt(req.params.take as string)
+    : undefined;
   const targetUserId = req.params.userId;
   const messages = await prisma.message.findMany({
+    take,
+    orderBy: {
+      createdAt: "desc",
+    },
     where: {
       OR: [
         { toId: req.user!.id, fromId: targetUserId },

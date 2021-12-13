@@ -20,6 +20,7 @@ export type UserProfile = UserView & {
     following: number;
   };
 };
+export type Room = UserView & { last_msg: Message };
 
 type HashTag = {
   name: string;
@@ -37,7 +38,9 @@ export type Post = {
 };
 
 export type Message = {
+  id: string;
   fromId: string;
   toId: string;
   text: string;
+  createdAt: string;
 };

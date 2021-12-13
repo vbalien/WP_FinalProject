@@ -1,4 +1,11 @@
-import { Box, Flex, Heading, SimpleGrid, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Heading,
+  SimpleGrid,
+  VStack,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -57,6 +64,7 @@ export default function Home() {
             }${exact && " 일치"} 검색: "${query}"`
           : "전체 게시글"}
       </Heading>
+      <Divider />
       <Box w="full">
         {posts ? (
           <SimpleGrid columns={3} spacing={5}>
