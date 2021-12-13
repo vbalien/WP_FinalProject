@@ -1,5 +1,5 @@
 import request from "./request";
-import { UserView } from "./types";
+import { UserProfile, UserView } from "./types";
 
 type AllUsersResponse = {
   data: UserView[];
@@ -48,7 +48,7 @@ export function register(payload: RegisterPayload) {
 }
 
 type ProfileResponse = {
-  data: UserView;
+  data: UserProfile;
 };
 /**
  * 프로필 요정
@@ -61,7 +61,7 @@ export function profile() {
  * 이메일 인증 전송
  */
 export function verifySend() {
-  return request<{ data: string }>("POST", "/verify/send");
+  return request<{ data: string }>("POST", "/users/verify/send");
 }
 
 type VerifyResponse = {

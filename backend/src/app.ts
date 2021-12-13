@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import session from "express-session";
 import path from "path";
 import { router as apiRouter } from "./api";
@@ -9,6 +10,14 @@ const app = express();
 
 // json format 사용
 app.use(express.json());
+
+// CORS 허용
+app.use(
+  cors({
+    origin: "http://localhost:10014",
+    credentials: true,
+  })
+);
 
 // session 사용
 const sess = {

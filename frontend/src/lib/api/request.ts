@@ -32,20 +32,22 @@ async function request<
   }
 
   // fetch 요청
-  const res = await fetch(`${process.env.API_BASE_URL}${path}`, {
+  const res = await fetch(`${process.env.API_BASE_URI}${path}`, {
     method,
+    credentials: "include",
     mode: "cors",
     cache: "no-cache",
     headers,
     body,
   });
 
-  // response code가 200번대 아닐 경우 throw Error
-  if (res.status < 200 || res.status >= 300) {
-    const errData = (await res.json()) as ErrorResponse;
+  // error가 있을 경우 throw
+  const json = await res.json();
+  if (json.error !== undefined) {
+    const errData = json as ErrorResponse;
     throw new ApiError(errData.error);
   }
-  return res.json() as Promise<R>;
+  return json as Promise<R>;
 }
 
 export default request;

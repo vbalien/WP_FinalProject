@@ -11,6 +11,6 @@ export default function errorHandler(
     return next(err);
   }
   console.error(err.name, err.message);
-  res.status(500);
+  res.status(200);
   res.json({ error: err.message });
 }

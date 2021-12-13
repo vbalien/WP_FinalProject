@@ -8,6 +8,14 @@ export default new LocalStrategy(async function (username, password, done) {
       where: {
         username,
       },
+      include: {
+        _count: {
+          select: {
+            following: true,
+            followedBy: true,
+          },
+        },
+      },
     });
 
     if (!foundUser) {

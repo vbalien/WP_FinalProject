@@ -17,12 +17,13 @@ esbuild.buildSync({
   bundle: true,
   minify: true,
   sourcemap: true,
+  loader: { ".png": "file" },
   inject: [path.join(__dirname, "react-shim.js")],
   jsxFactory: "jsx",
   jsxFragment: "Fragment",
-  outdir: path.join(__dirname, "../dist/js/"),
+  outdir: path.join(__dirname, "../dist/"),
   define: {
-    API_BASE_URI: JSON.stringify("/api/"),
+    "process.env.API_BASE_URI": JSON.stringify("/api"),
     "process.env.NODE_ENV": JSON.stringify("production"),
   },
 });

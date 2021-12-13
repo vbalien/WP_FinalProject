@@ -14,6 +14,12 @@ export type User = {
 };
 
 export type UserView = Omit<User, "password">;
+export type UserProfile = UserView & {
+  _count: {
+    followedBy: number;
+    following: number;
+  };
+};
 
 type HashTag = {
   name: string;
